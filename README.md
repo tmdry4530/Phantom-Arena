@@ -4,6 +4,8 @@
 
 **Moltiverse Hackathon 2026 · Agent Track · Gaming Arena Bounty**
 
+### [Demo Video](https://youtu.be/PLACEHOLDER) | [Live Demo](https://ghost-protocol.vercel.app)
+
 ---
 
 ## 목차
@@ -322,8 +324,8 @@ pnpm turbo run typecheck
 
 ## 데모
 
-- **라이브 데모**: `배포 후 업데이트`
-- **데모 비디오**: `링크 추가 예정`
+- **라이브 데모**: [https://ghost-protocol.vercel.app](https://ghost-protocol.vercel.app)
+- **데모 비디오**: [YouTube](https://youtu.be/PLACEHOLDER)
 
 ---
 
