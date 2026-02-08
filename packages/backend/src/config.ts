@@ -30,7 +30,7 @@ const envSchema = z.object({
 
   /** Claude API 키 (Ghost AI Tier 4+ 전략용) */
   CLAUDE_API_KEY: z.string().optional(),
-  CLAUDE_MODEL: z.string().default('claude-sonnet-4-20250514'),
+  CLAUDE_MODEL: z.string().default('claude-haiku-4-5-20251001'),
 
   /** IPFS 설정 */
   PINATA_API_KEY: z.string().optional(),

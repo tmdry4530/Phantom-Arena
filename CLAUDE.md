@@ -273,7 +273,7 @@ CORS_ORIGIN=http://localhost:5173
 
 # AI
 CLAUDE_API_KEY=              # Ghost AI Tier 4+ LLM 전략용
-CLAUDE_MODEL=claude-sonnet-4-20250514
+CLAUDE_MODEL=claude-haiku-4-5-20251001
 
 # IPFS
 PINATA_API_KEY=

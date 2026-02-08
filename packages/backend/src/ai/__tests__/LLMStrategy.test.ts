@@ -86,7 +86,7 @@ function createValidApiResponse() {
 function createDefaultConfig(overrides?: Partial<LLMStrategyConfig>): LLMStrategyConfig {
   return {
     apiKey: 'test-api-key',
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-haiku-4-5-20251001',
     maxTokens: 512,
     maxRequestsPerMinute: 30,
     cacheTTLMs: 2000,
@@ -140,7 +140,7 @@ describe('ClaudeLLMStrategy', () => {
 
       expect(mockCreate).toHaveBeenCalledTimes(1);
       const callArgs = mockCreate.mock.calls[0]?.[0] as Record<string, unknown>;
-      expect(callArgs['model']).toBe('claude-sonnet-4-20250514');
+      expect(callArgs['model']).toBe('claude-haiku-4-5-20251001');
       expect(callArgs['max_tokens']).toBe(512);
       expect(typeof callArgs['system']).toBe('string');
       expect(Array.isArray(callArgs['messages'])).toBe(true);
@@ -918,7 +918,7 @@ describe('ClaudeLLMStrategy', () => {
       await customStrategy.requestStrategy(createMockRequest());
 
       const callArgs = mockCreate.mock.calls[0]?.[0] as Record<string, unknown>;
-      expect(callArgs['model']).toBe('claude-sonnet-4-20250514');
+      expect(callArgs['model']).toBe('claude-haiku-4-5-20251001');
       expect(callArgs['max_tokens']).toBe(512);
     });
 

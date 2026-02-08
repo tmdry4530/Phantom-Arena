@@ -24,7 +24,7 @@ import type {
 interface LLMStrategyConfig {
   /** Anthropic API 키 */
   readonly apiKey: string;
-  /** 사용할 Claude 모델 (기본값: 'claude-sonnet-4-20250514') */
+  /** 사용할 Claude 모델 (기본값: 'claude-haiku-4-5-20251001') */
   readonly model?: string;
   /** 최대 응답 토큰 수 (기본값: 512) */
   readonly maxTokens?: number;
@@ -506,7 +506,7 @@ strategy 필드에 상세한 전략 설명을 포함하세요.`;
  * ```typescript
  * const strategy = new ClaudeLLMStrategy({
  *   apiKey: process.env.CLAUDE_API_KEY ?? '',
- *   model: 'claude-sonnet-4-20250514',
+ *   model: 'claude-haiku-4-5-20251001',
  *   enableHistoricalAnalysis: false,
  * });
  *
@@ -536,7 +536,7 @@ class ClaudeLLMStrategy implements LLMStrategyProvider {
    */
   constructor(config: LLMStrategyConfig) {
     this.client = new Anthropic({ apiKey: config.apiKey });
-    this.model = config.model ?? 'claude-sonnet-4-20250514';
+    this.model = config.model ?? 'claude-haiku-4-5-20251001';
     this.maxTokens = config.maxTokens ?? 512;
     this.rateLimiter = new TokenBucketRateLimiter(config.maxRequestsPerMinute ?? 30);
     this.cache = new LLMResponseCache(config.cacheTTLMs ?? 2000);

@@ -9,7 +9,7 @@ import { escapePaths } from '../helpers/escapePaths.js';
 export interface LLMAgentConfig {
   /** Claude API 키 (선택) */
   readonly apiKey?: string;
-  /** 사용할 모델 (기본값: 'claude-sonnet-4-20250514') */
+  /** 사용할 모델 (기본값: 'claude-haiku-4-5-20251001') */
   readonly model?: string;
   /** LLM 분석 간격 (틱 단위, 기본값: 60) */
   readonly analysisInterval?: number;
@@ -44,7 +44,7 @@ export class LLMAgent extends GhostAgent {
 
     this.config = {
       apiKey: config.apiKey ?? '',
-      model: config.model ?? 'claude-sonnet-4-20250514',
+      model: config.model ?? 'claude-haiku-4-5-20251001',
       analysisInterval: config.analysisInterval ?? 60,
     };
   }
