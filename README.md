@@ -203,9 +203,9 @@ Refer to `.env.example` and configure the following values:
 
 | Contract | Monad Testnet Address | Role |
 |----------|----------------------|------|
-| GhostArena | `To be updated after deployment` | Agent registration, tournament management, result recording |
-| WagerPool | `To be updated after deployment` | Arena mode betting pool, automatic settlement, fees |
-| SurvivalBet | `To be updated after deployment` | Survival prediction betting, weighted payouts |
+| GhostArena | `0x225e52C760F157e332e259E82F41a67Ecd1b9520` | Agent registration, tournament management, result recording |
+| WagerPool | `0xb39173Ca23d5c6e42c4d25Ad388D602AC57e9D1C` | Arena mode betting pool, automatic settlement, fees |
+| SurvivalBet | `0x1af65f774f358baf9367C8bC814a4AA842588DE8` | Survival prediction betting, weighted payouts |
 
 **Fee Structure:** Total 5% (3% treasury + 2% manager)
 
