@@ -1,0 +1,37 @@
+{
+  "name": "@ghost-protocol/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ghost Protocol 관전자 프론트엔드 - React + Phaser.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "phaser": "^3.90.0",
+    "wagmi": "^2.14.0",
+    "viem": "^2.45.1",
+    "@tanstack/react-query": "^5.90.0",
+    "react-router-dom": "^7.0.0",
+    "zustand": "^5.0.0",
+    "socket.io-client": "^4.8.3",
+    "tone": "^15.1.22",
+    "@ghost-protocol/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "vitest": "^3.0.0",
+    "autoprefixer": "^10.4.0"
+  }
+}

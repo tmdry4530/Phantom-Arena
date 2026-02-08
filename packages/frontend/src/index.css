@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import "tailwindcss";
+
+/* Ghost Protocol 커스텀 테마 */
+@theme {
+  /* 기존 색상 */
+  --color-ghost-violet: #8b5cf6;
+  --color-ghost-violet-dark: #6d28d9;
+  --color-ghost-blue: #3b82f6;
+  --color-ghost-neon: #22d3ee;
+  --color-ghost-pink: #ec4899;
+  --color-ghost-red: #ef4444;
+  --color-ghost-orange: #f97316;
+  --color-arena-bg: #0a0a1a;
+  --color-arena-wall: #4338ca;
+  --color-arena-pellet: #fbbf24;
+
+  /* 추가 표면 색상 */
+  --color-arena-surface: #111128;
+  --color-arena-card: #1a1a3e;
+  --color-arena-border: #2d2b6b;
+
+  /* 폰트 패밀리 */
+  --font-display: 'Press Start 2P', monospace;
+}
+
+/* 네온 글로우 애니메이션 */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--color-ghost-violet),
+                0 0 10px var(--color-ghost-violet),
+                0 0 15px var(--color-ghost-violet);
+  }
+  50% {
+    box-shadow: 0 0 10px var(--color-ghost-violet),
+                0 0 20px var(--color-ghost-violet),
+                0 0 30px var(--color-ghost-violet);
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 5px var(--color-ghost-violet),
+                 0 0 10px var(--color-ghost-violet),
+                 0 0 15px var(--color-ghost-violet),
+                 0 0 20px var(--color-ghost-violet);
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.8;
+  }
+}
+
+/* 유틸리티 클래스 */
+.neon-glow {
+  box-shadow: 0 0 5px var(--color-ghost-violet),
+              0 0 10px var(--color-ghost-violet),
+              0 0 15px var(--color-ghost-violet);
+}
+
+.neon-text {
+  text-shadow: 0 0 5px var(--color-ghost-violet),
+               0 0 10px var(--color-ghost-violet),
+               0 0 15px var(--color-ghost-violet),
+               0 0 20px var(--color-ghost-violet);
+  animation: neon-flicker 3s infinite alternate;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px var(--color-ghost-violet),
+              0 0 20px var(--color-ghost-violet),
+              0 0 30px var(--color-ghost-violet);
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-arena-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ghost-violet);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ghost-violet-dark);
+}
+
+/* Firefox 스크롤바 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ghost-violet) var(--color-arena-bg);
+}
+
+/* 선택 영역 스타일링 */
+::selection {
+  background-color: var(--color-ghost-violet);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--color-ghost-violet);
+  color: white;
+}
+
+/* 서바이벌 모드 애니메이션 */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes pulse-medium {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes pulse-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-pulse-medium {
+  animation: pulse-medium 2s ease-in-out infinite;
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1s ease-in-out infinite;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.5s ease-out;
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
