@@ -104,6 +104,7 @@ export interface GameState {
   readonly powerActive: boolean;
   readonly powerTimeRemaining: number;
   readonly fruitAvailable: FruitInfo | null;
+  readonly dying: boolean;
 }
 
 /** 에이전트 행동 (매 틱마다 반환) */
