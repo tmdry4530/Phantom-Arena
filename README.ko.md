@@ -69,7 +69,7 @@ graph TB
         AI[Ghost AI Controller\n5-Tier Difficulty]
         LLM[Claude LLM Strategy\nTier 4-5]
         SANDBOX[isolated-vm\nAgent Sandbox]
-        QUEUE[BullMQ + Redis\nMatch Scheduling]
+        SCHED[InMemory Scheduler\n데모 토너먼트 러너]
         IPFS_SVC[Pinata IPFS\nReplay Storage]
     end
 
@@ -88,9 +88,9 @@ graph TB
     ENGINE --> AI
     AI -.->|Tier 4-5| LLM
     ENGINE --> SANDBOX
-    API --> QUEUE
+    API --> SCHED
     API --> IPFS_SVC
-    QUEUE --> ENGINE
+    SCHED --> ENGINE
     API -->|ethers.js| ARENA
 ```
 
@@ -132,7 +132,7 @@ graph TB
 |--------|------|
 | Frontend | React 19, Vite 6, Phaser 3, TailwindCSS 4, Tone.js |
 | Wallet | wagmi 2, viem 2, Monad Testnet |
-| Backend | Express 5, Socket.io 4, BullMQ 5, Redis |
+| Backend | Express 5, Socket.io 4, InMemory Scheduler |
 | AI | 5-Tier Ghost AI, Claude API (Tier 4-5), isolated-vm |
 | Blockchain | Solidity 0.8.24, Foundry, OpenZeppelin 5 |
 | State | Zustand 5, @tanstack/react-query 5 |
@@ -148,7 +148,6 @@ graph TB
 - **Node.js** >= 20
 - **pnpm** >= 9 — 설치: `npm install -g pnpm`
 - **Foundry** (forge, cast, anvil) — 설치: `curl -L https://foundry.paradigm.xyz | bash && foundryup`
-- **Redis** (선택, 매치 큐용) — `docker run -d -p 6379:6379 redis:7-alpine`
 
 ### 빠른 시작
 
@@ -181,7 +180,7 @@ pnpm dev
 # WebSocket: ws://localhost:3001
 ```
 
-> **팁:** 브라우저에서 http://localhost:5173 을 열고 **SPACE** 키 또는 **START GAME** 버튼을 누르면 바로 서바이벌 모드를 플레이할 수 있습니다.
+> **팁:** 브라우저에서 http://localhost:5173 을 열고 **SPACE** 키 또는 **START GAME** 버튼을 누르면 바로 서바이벌 모드를 플레이할 수 있습니다. 8개 AI 에이전트의 데모 토너먼트가 자동 시작됩니다 — Redis나 외부 큐 불필요.
 
 ### 환경 변수
 
@@ -191,7 +190,6 @@ pnpm dev
 |------|------|------|
 | `MONAD_RPC_URL` | Monad 테스트넷 RPC URL | O |
 | `ARENA_MANAGER_PRIVATE_KEY` | 아레나 매니저 개인키 (서버 전용) | X* |
-| `REDIS_URL` | Redis 접속 URL | X |
 | `CLAUDE_API_KEY` | Claude API 키 (Tier 4+ AI용) | X |
 | `PINATA_API_KEY` | Pinata IPFS API 키 | X |
 

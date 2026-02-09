@@ -69,7 +69,7 @@ graph TB
         AI[Ghost AI Controller\n5-Tier Difficulty]
         LLM[Claude LLM Strategy\nTier 4-5]
         SANDBOX[isolated-vm\nAgent Sandbox]
-        QUEUE[BullMQ + Redis\nMatch Scheduling]
+        SCHED[InMemory Scheduler\nDemo Tournament Runner]
         IPFS_SVC[Pinata IPFS\nReplay Storage]
     end
 
@@ -88,9 +88,9 @@ graph TB
     ENGINE --> AI
     AI -.->|Tier 4-5| LLM
     ENGINE --> SANDBOX
-    API --> QUEUE
+    API --> SCHED
     API --> IPFS_SVC
-    QUEUE --> ENGINE
+    SCHED --> ENGINE
     API -->|ethers.js| ARENA
 ```
 
@@ -132,7 +132,7 @@ graph TB
 |-------|-----------|
 | Frontend | React 19, Vite 6, Phaser 3, TailwindCSS 4, Tone.js |
 | Wallet | wagmi 2, viem 2, Monad Testnet |
-| Backend | Express 5, Socket.io 4, BullMQ 5, Redis |
+| Backend | Express 5, Socket.io 4, InMemory Scheduler |
 | AI | 5-Tier Ghost AI, Claude API (Tier 4-5), isolated-vm |
 | Blockchain | Solidity 0.8.24, Foundry, OpenZeppelin 5 |
 | State | Zustand 5, @tanstack/react-query 5 |
@@ -148,7 +148,6 @@ graph TB
 - **Node.js** >= 20
 - **pnpm** >= 9 — Install: `npm install -g pnpm`
 - **Foundry** (forge, cast, anvil) — Install: `curl -L https://foundry.paradigm.xyz | bash && foundryup`
-- **Redis** (optional, for match queue) — `docker run -d -p 6379:6379 redis:7-alpine`
 
 ### Quick Start
 
@@ -181,7 +180,7 @@ pnpm dev
 # WebSocket: ws://localhost:3001
 ```
 
-> **Tip:** Open http://localhost:5173 in your browser, press **SPACE** or click **START GAME** to play Survival Mode immediately.
+> **Tip:** Open http://localhost:5173 in your browser, press **SPACE** or click **START GAME** to play Survival Mode immediately. A demo tournament with 8 AI agents starts automatically — no Redis or external queue required.
 
 ### Environment Variables
 
@@ -191,7 +190,6 @@ Refer to `.env.example` and configure the following values:
 |----------|-------------|----------|
 | `MONAD_RPC_URL` | Monad Testnet RPC URL | Yes |
 | `ARENA_MANAGER_PRIVATE_KEY` | Arena manager private key (server-only) | No* |
-| `REDIS_URL` | Redis connection URL | No |
 | `CLAUDE_API_KEY` | Claude API key (for Tier 4+ AI) | No |
 | `PINATA_API_KEY` | Pinata IPFS API key | No |
 
