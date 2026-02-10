@@ -79,6 +79,10 @@ export class IndexerService {
   private lastSeenTimestamp = 0n;
   private isPolling = false;
 
+  // 서킷 브레이커: 연속 실패 횟수 추적
+  private consecutiveFailures = 0;
+  private readonly MAX_CONSECUTIVE_FAILURES = 5;
+
   constructor(options: IndexerServiceOptions) {
     this.graphqlUrl = options.graphqlUrl;
     this.io = options.io;
@@ -89,11 +93,34 @@ export class IndexerService {
   /**
    * 폴링 시작
    */
-  start(intervalMs?: number): void {
+  async start(intervalMs?: number): Promise<void> {
     const interval = intervalMs ?? this.pollInterval;
 
     if (this.intervalId !== null) {
       this.logger.warn('IndexerService already running');
+      return;
+    }
+
+    // 초기 연결 확인 (3초 타임아웃)
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      const response = await fetch(this.graphqlUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: '{__typename}' }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        this.logger.warn('Envio indexer not reachable — IndexerService will not start polling');
+        return;
+      }
+    } catch (error) {
+      this.logger.warn('Envio indexer not reachable — IndexerService will not start polling');
       return;
     }
 
@@ -127,6 +154,14 @@ export class IndexerService {
   }
 
   /**
+   * 서비스 헬스 체크
+   * @returns 연속 실패 횟수가 임계값 미만이면 true
+   */
+  isHealthy(): boolean {
+    return this.consecutiveFailures < this.MAX_CONSECUTIVE_FAILURES;
+  }
+
+  /**
    * 폴링 실행 (모든 이벤트 조회 및 브로드캐스트)
    */
   private async poll(): Promise<void> {
@@ -146,6 +181,9 @@ export class IndexerService {
         this.queryRecentTournaments(),
         this.queryRecentMatchResults(),
       ]);
+
+      // 성공: 연속 실패 카운터 리셋
+      this.consecutiveFailures = 0;
 
       // 새로운 베팅 브로드캐스트
       for (const bet of bets) {
@@ -211,6 +249,21 @@ export class IndexerService {
         if (maxTimestamp > this.lastSeenTimestamp) {
           this.lastSeenTimestamp = maxTimestamp;
         }
+      }
+    } catch (error) {
+      // 실패: 연속 실패 카운터 증가
+      this.consecutiveFailures++;
+      this.logger.error(
+        { error, consecutiveFailures: this.consecutiveFailures },
+        'Polling failed',
+      );
+
+      // 서킷 브레이커: 최대 연속 실패 횟수 도달 시 중지
+      if (this.consecutiveFailures >= this.MAX_CONSECUTIVE_FAILURES) {
+        this.logger.error(
+          `IndexerService disabled — Envio indexer unreachable after ${this.MAX_CONSECUTIVE_FAILURES} consecutive failures`,
+        );
+        this.stop();
       }
     } finally {
       this.isPolling = false;
