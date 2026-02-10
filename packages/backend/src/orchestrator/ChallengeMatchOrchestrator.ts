@@ -120,7 +120,7 @@ export class ChallengeMatchOrchestrator {
     }
 
     const id = `challenge-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    const sessionId = `match:challenge-${id}`;
+    const sessionId = `match:${id}`;
     const onChainMatchId = ++this.onChainMatchCounter;
 
     const match: ChallengeMatch = {
