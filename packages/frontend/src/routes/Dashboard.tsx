@@ -122,8 +122,8 @@ export function Dashboard(): React.JSX.Element {
           className="animate-text-glow text-center font-black tracking-widest"
           style={{ fontFamily: 'var(--font-display)', color: '#7c3aed' }}
         >
-          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px]">GHOST</span>
-          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px] mt-2">PROTOCOL</span>
+          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px]">PHANTOM</span>
+          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px] mt-2">ARENA</span>
         </h1>
 
         {/* 태그라인 */}
