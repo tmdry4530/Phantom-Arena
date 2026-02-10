@@ -15,8 +15,8 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { API_URL as API_BASE, fetchApi } from '@/lib/api';
 
-const API_BASE = (import.meta.env['VITE_API_URL'] as string) || 'http://localhost:3001/api/v1';
 const CIRCLE_APP_ID = import.meta.env['VITE_CIRCLE_APP_ID'] as string | undefined;
 
 /** Circle SDK 상태 */
@@ -118,7 +118,7 @@ export function useCircleWallet(): UseCircleWalletReturn {
       const deviceId = generateDeviceId();
 
       // 2. 백엔드에서 deviceToken 발급
-      const deviceTokenRes = await fetch(`${API_BASE}/wallet/device-token`, {
+      const deviceTokenRes = await fetchApi(`${API_BASE}/wallet/device-token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ deviceId }),
@@ -139,7 +139,7 @@ export function useCircleWallet(): UseCircleWalletReturn {
       setStatus('initializing');
 
       // 4. 백엔드에서 유저 초기화
-      const initRes = await fetch(`${API_BASE}/wallet/initialize`, {
+      const initRes = await fetchApi(`${API_BASE}/wallet/initialize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userToken: mockUserToken }),
@@ -154,7 +154,7 @@ export function useCircleWallet(): UseCircleWalletReturn {
       }
 
       // 5. 지갑 목록 조회
-      const listRes = await fetch(`${API_BASE}/wallet/list`, {
+      const listRes = await fetchApi(`${API_BASE}/wallet/list`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userToken: mockUserToken }),

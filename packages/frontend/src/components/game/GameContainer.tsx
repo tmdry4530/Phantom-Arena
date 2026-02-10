@@ -7,6 +7,7 @@ import { useGameSocket } from '../../hooks/useGameSocket';
 import { useGameAudio } from '../../hooks/useGameAudio.js';
 import { useAudio } from '../../hooks/useAudio.js';
 import type { Direction } from '@ghost-protocol/shared';
+import { API_URL, fetchApi } from '@/lib/api';
 
 /** Game container - WebSocket-based server state rendering */
 export function GameContainer() {
@@ -24,8 +25,7 @@ export function GameContainer() {
   // Create server session and start game
   const handleStartGame = useCallback(async () => {
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3001/api/v1';
-      const response = await fetch(`${apiUrl}/survival`, {
+      const response = await fetchApi(`${API_URL}/survival`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ difficulty }),

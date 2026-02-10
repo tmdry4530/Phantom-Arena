@@ -8,6 +8,7 @@ import { MatchStatsOverlay } from '../components/game/MatchStatsOverlay.js';
 import { BettingPanel } from '../components/game/BettingPanel.js';
 import { useMatchSocket } from '../hooks/useMatchSocket.js';
 import { useBettingStore } from '../stores/bettingStore.js';
+import { API_URL, fetchApi } from '@/lib/api';
 
 /**
  * Game spectating page
@@ -51,15 +52,14 @@ export function GameViewer() {
 
   // API에서 매치 데이터 가져오기
   useEffect(() => {
-    const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3001/api/v1';
     let mounted = true;
 
     const fetchMatchData = async () => {
       try {
         // 매치 데이터 가져오기
         const [matchRes, agentsRes] = await Promise.all([
-          fetch(`${API_URL}/matches/${matchId}`),
-          fetch(`${API_URL}/agents`),
+          fetchApi(`${API_URL}/matches/${matchId}`),
+          fetchApi(`${API_URL}/agents`),
         ]);
 
         if (!matchRes.ok || !agentsRes.ok || !mounted) return;

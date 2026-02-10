@@ -4,9 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import type { ChallengeMatchInfo } from '@ghost-protocol/shared';
-
-/** API 기본 URL */
-const API_URL = (import.meta.env['VITE_API_URL'] as string) || 'http://localhost:3001/api/v1';
+import { API_URL, fetchApi } from '@/lib/api';
 
 /** 폴링 간격 (밀리초) */
 const POLL_INTERVAL = 5000;
@@ -26,7 +24,7 @@ export function useChallengeList(): UseChallengeListReturn {
 
   const fetchChallenges = useCallback(async (): Promise<void> => {
     try {
-      const res = await fetch(`${API_URL}/challenge`);
+      const res = await fetchApi(`${API_URL}/challenge`);
       if (!res.ok) throw new Error(`HTTP ${String(res.status)}`);
       const data = (await res.json()) as { challenges: ChallengeMatchInfo[] };
       setChallenges(data.challenges);

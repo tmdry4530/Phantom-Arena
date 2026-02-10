@@ -5,9 +5,7 @@ import { useState, useEffect } from 'react';
 import { BracketView } from '@/components/tournament/BracketView';
 import { PrizePool } from '@/components/tournament/PrizePool';
 import type { BracketRound, BracketMatch, MatchStatus } from '@/types/tournament';
-
-/** API Base URL */
-const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3001/api/v1';
+import { API_URL, fetchApi } from '@/lib/api';
 
 /** 백엔드 API 응답 타입 */
 interface TournamentResponse {
@@ -77,7 +75,7 @@ export function Tournament() {
     const fetchData = async () => {
       try {
         // 에이전트 정보 가져오기
-        const agentsRes = await fetch(`${API_URL}/agents`);
+        const agentsRes = await fetchApi(`${API_URL}/agents`);
         if (!agentsRes.ok) throw new Error('Failed to fetch agent list');
         const agentsData = (await agentsRes.json()) as AgentsResponse;
         const newAgentsMap = new Map(agentsData.agents.map((a) => [a.address, a]));
@@ -85,7 +83,7 @@ export function Tournament() {
         // 토너먼트 ID 결정 (current 또는 undefined → 최신 활성/완료 토너먼트)
         let tournamentId = id;
         if (!id || id === 'current') {
-          const listRes = await fetch(`${API_URL}/tournaments`);
+          const listRes = await fetchApi(`${API_URL}/tournaments`);
           if (!listRes.ok) throw new Error('Failed to fetch tournament list');
           const listData = (await listRes.json()) as TournamentsListResponse;
 
@@ -104,7 +102,7 @@ export function Tournament() {
         }
 
         // 토너먼트 상세 정보 가져오기
-        const tournamentRes = await fetch(`${API_URL}/tournaments/${tournamentId}`);
+        const tournamentRes = await fetchApi(`${API_URL}/tournaments/${tournamentId}`);
         if (!tournamentRes.ok) {
           if (mounted) {
             if (tournamentRes.status === 404) {

@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDashboardStore } from '@/stores/dashboardStore';
+import { API_URL, fetchApi } from '@/lib/api';
 
 /** 시간 경과 포맷 */
 function formatTimeAgo(timestamp: number): string {
@@ -41,9 +42,7 @@ export function Dashboard(): React.JSX.Element {
 
   // 에이전트 이름 로드
   useEffect(() => {
-    const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3001/api/v1';
-
-    fetch(`${API_URL}/agents`)
+    fetchApi(`${API_URL}/agents`)
       .then(res => res.json())
       .then((data: { agents: Array<{ address: string; name: string }> }) => {
         const nameMap = new Map(data.agents.map(a => [a.address, a.name]));

@@ -11,8 +11,7 @@ import { useWriteContract } from 'wagmi';
 import type { MatchId, BetSide } from '@ghost-protocol/shared';
 import { useUnifiedWallet } from '../providers/UnifiedWalletProvider.js';
 import { WAGER_POOL_ABI, WAGER_POOL_ADDRESS } from '../lib/contracts.js';
-
-const API_BASE = (import.meta.env['VITE_API_URL'] as string) || 'http://localhost:3001/api/v1';
+import { API_URL as API_BASE, fetchApi } from '@/lib/api';
 
 /** usePlaceBet 반환 타입 */
 interface UsePlaceBetReturn {
@@ -143,7 +142,7 @@ export function usePlaceBet(): UsePlaceBetReturn {
             ? [matchId, params.side]
             : [matchId, params.role];
 
-          const response = await fetch(`${API_BASE}/wallet/transaction`, {
+          const response = await fetchApi(`${API_BASE}/wallet/transaction`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

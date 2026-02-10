@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL, fetchApi } from '@/lib/api';
 
 /** Agent address type */
 type AgentAddress = string & { readonly __brand: 'AgentAddress' };
@@ -74,11 +75,9 @@ export function AgentRankingTable() {
 
   // API에서 리더보드 데이터 로드
   useEffect(() => {
-    const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3001/api/v1';
-
     void (async () => {
       try {
-        const res = await fetch(`${API_URL}/leaderboard`);
+        const res = await fetchApi(`${API_URL}/leaderboard`);
         if (res.ok) {
           const data = await res.json() as { leaderboard: LeaderboardEntry[] };
 
