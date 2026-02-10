@@ -142,7 +142,7 @@ function main(): void {
 
   // Start server
   httpServer.listen(env.PORT, () => {
-    logger.info(`Ghost Protocol server started: http://localhost:${env.PORT.toString()}`);
+    logger.info(`Phantom Arena server started: http://localhost:${env.PORT.toString()}`);
     logger.info(`WebSocket listening: ws://localhost:${env.PORT.toString()}`);
     logger.info(`API: http://localhost:${env.PORT.toString()}/api/v1`);
     logger.info(`Envio Indexer connected: ${env.ENVIO_GRAPHQL_URL}`);

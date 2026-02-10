@@ -114,7 +114,7 @@ export function GameContainer() {
         className="text-2xl font-bold mb-4"
         style={{ color: '#8B5CF6', fontFamily: "'Courier New', monospace" }}
       >
-        GHOST PROTOCOL
+        PHANTOM ARENA
       </h1>
 
       <div className="relative">

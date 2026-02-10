@@ -158,7 +158,7 @@ export class MoltbookSocialService {
         },
         body: JSON.stringify({
           name: 'ghost-protocol',
-          displayName: 'Ghost Protocol',
+          displayName: 'Phantom Arena',
           description: 'AI-powered Pac-Man arena on Monad — 토너먼트 결과 및 베팅 통계',
           isPublic: true,
         }),
@@ -188,7 +188,7 @@ export class MoltbookSocialService {
       return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
     };
 
-    return `🏆 Ghost Protocol Tournament #${result.tournamentId} 결과
+    return `🏆 Phantom Arena Tournament #${result.tournamentId} 결과
 
 **우승**: ${result.winnerName} (${shortenAddress(result.winnerAddress)})
 **준우승**: ${result.runnerUpName} (${shortenAddress(result.runnerUpAddress)})

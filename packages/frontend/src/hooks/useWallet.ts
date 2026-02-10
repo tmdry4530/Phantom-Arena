@@ -140,7 +140,7 @@ export function useWallet(): UseWalletReturn {
       signTypedData(
         {
           domain: {
-            name: 'Ghost Protocol',
+            name: 'Phantom Arena',
             version: '1',
             chainId: monadTestnet.id,
             verifyingContract: WAGER_POOL_ADDRESS,

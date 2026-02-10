@@ -49,7 +49,7 @@ export function Layout() {
       <header className={`fixed left-0 right-0 top-0 z-40 transition-all duration-300 ${scrolled ? 'border-b border-ghost-violet/20 bg-arena-bg/90 backdrop-blur-lg' : 'bg-transparent'}`}>
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
           {/* 로고 */}
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2C7.58 2 4 5.58 4 10V20.5L6.5 18L9 20.5L12 17.5L15 20.5L17.5 18L20 20.5V10C20 5.58 16.42 2 12 2Z" fill="#7c3aed" />
               <circle cx="9" cy="10" r="1.5" fill="#0a0a0f" />
@@ -59,9 +59,9 @@ export function Layout() {
               className="neon-text-purple font-display text-sm font-bold tracking-wider text-ghost-violet lg:text-base"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              GHOST PROTOCOL
+              PHANTOM ARENA
             </h1>
-          </div>
+          </Link>
 
           {/* 데스크톱 네비게이션 링크 */}
           <div className="hidden items-center gap-3 md:flex lg:gap-5">
@@ -172,7 +172,7 @@ export function Layout() {
 
           {/* 저작권 */}
           <p className="text-center text-[10px] tracking-wider text-gray-500">
-            GHOST PROTOCOL © 2026 • All bets are final • Play responsibly
+            PHANTOM ARENA © 2026 • All bets are final • Play responsibly
           </p>
 
           {/* 링크 */}

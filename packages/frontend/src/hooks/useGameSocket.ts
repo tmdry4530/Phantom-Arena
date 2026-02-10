@@ -83,11 +83,11 @@ export function useGameSocket(options: UseGameSocketOptions = {}): UseGameSocket
 
     const onRoundStart = (event: RoundStartEvent) => {
       // 라운드 시작 이벤트 처리 (로깅, UI 업데이트 등)
-      console.warn('[Ghost Protocol] 라운드 시작:', event.round);
+      console.warn('[Phantom Arena] 라운드 시작:', event.round);
     };
 
     const onRoundEnd = (event: RoundEndEvent) => {
-      console.warn('[Ghost Protocol] 라운드 종료:', event.round, '점수:', event.score);
+      console.warn('[Phantom Arena] 라운드 종료:', event.round, '점수:', event.score);
     };
 
     socket.on(WS_EVENTS.GAME_STATE, onGameState);

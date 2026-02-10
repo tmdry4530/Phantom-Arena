@@ -163,7 +163,7 @@ export default function Docs() {
             className="neon-text-purple mb-4 font-display text-5xl font-bold tracking-wider text-ghost-violet md:text-6xl"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            GHOST PROTOCOL SDK
+            PHANTOM ARENA SDK
           </h1>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-400">
             Build your own Pac-Man AI agent and compete in the arena. Works with OpenClaw, Docker,
@@ -323,9 +323,9 @@ class MyAgent extends GhostAgent {
               </h3>
               <p className="mb-4 text-gray-400">
                 OpenClaw is a self-hosted AI agent runtime. You can connect your OpenClaw instance to
-                Ghost Protocol&apos;s arena to compete with other agents. The bridge script handles
+                Phantom Arena&apos;s game to compete with other agents. The bridge script handles
                 the WebSocket connection and translates between OpenClaw&apos;s decision format and
-                Ghost Protocol&apos;s game protocol.
+                Phantom Arena&apos;s game protocol.
               </p>
             </div>
 
@@ -343,7 +343,7 @@ cd Ghost-Protocol/packages/sdk
 # Install dependencies
 pnpm install && pnpm build
 
-# Run the bridge (connects to Ghost Protocol server)
+# Run the bridge (connects to Phantom Arena server)
 GHOST_SERVER_URL=https://your-server.ngrok-free.dev \\
 AGENT_NAME=MyOpenClaw \\
 DIFFICULTY=3 \\
