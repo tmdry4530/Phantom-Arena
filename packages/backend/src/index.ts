@@ -16,6 +16,8 @@ import { createApiRouter, ApiStateStore } from './routes/api.js';
 import { agentRegistrationRouter } from './routes/agentRegistration.js';
 import { circleWalletRouter } from './routes/circleWallet.js';
 import { DemoTournamentRunner } from './orchestrator/DemoTournamentRunner.js';
+import { ChallengeMatchOrchestrator } from './orchestrator/ChallengeMatchOrchestrator.js';
+import { BettingOrchestrator } from './orchestrator/BettingOrchestrator.js';
 import { IndexerService } from './services/indexerService.js';
 
 /** 구조화된 로거 인스턴스 */
@@ -60,6 +62,30 @@ function main(): void {
   // SocketManager에 상태 저장소 연결 (로비 참가 시 현재 상태 전송용)
   socketManager.setStateStore(stateStore);
 
+  // 배팅 오케스트레이터 초기화 (온체인 키/주소 있을 때만)
+  let bettingOrchestrator: BettingOrchestrator | undefined;
+  if (env.ARENA_MANAGER_PRIVATE_KEY && env.WAGER_POOL_ADDRESS) {
+    bettingOrchestrator = new BettingOrchestrator({
+      rpcUrl: env.MONAD_RPC_URL,
+      privateKey: env.ARENA_MANAGER_PRIVATE_KEY,
+      wagerPoolAddress: env.WAGER_POOL_ADDRESS,
+      socketManager,
+    });
+    logger.info('BettingOrchestrator 초기화 완료 (온체인 배팅 활성)');
+  } else {
+    logger.info('BettingOrchestrator 미초기화 (ARENA_MANAGER_PRIVATE_KEY 또는 WAGER_POOL_ADDRESS 미설정)');
+  }
+
+  // 챌린지 매치 오케스트레이터 초기화
+  const challengeOrchestrator = new ChallengeMatchOrchestrator(
+    gameLoopManager,
+    socketManager,
+    bettingOrchestrator,
+  );
+
+  // SocketManager에 챌린지 오케스트레이터 연결
+  socketManager.setChallengeOrchestrator(challengeOrchestrator);
+
   // 상태 확인 엔드포인트
   app.get('/health', (_req, res) => {
     res.json({
@@ -73,7 +99,7 @@ function main(): void {
   });
 
   // API v1 라우터 마운트
-  const apiRouter = createApiRouter(gameLoopManager, stateStore);
+  const apiRouter = createApiRouter(gameLoopManager, stateStore, challengeOrchestrator);
   app.use('/api/v1', apiRouter);
 
   // v2 라우트 마운트
@@ -101,6 +127,8 @@ function main(): void {
   const shutdown = () => {
     logger.info('서버 종료 중...');
     demoRunner.stop();
+    bettingOrchestrator?.shutdown();
+    challengeOrchestrator.shutdown();
     indexerService.stop();
     socketManager.shutdown();
     httpServer.close(() => {

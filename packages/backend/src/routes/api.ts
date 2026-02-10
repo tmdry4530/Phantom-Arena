@@ -5,6 +5,8 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
 import type { GameLoopManager } from '../game/GameLoopManager.js';
+import type { ChallengeMatchOrchestrator } from '../orchestrator/ChallengeMatchOrchestrator.js';
+import type { DifficultyTier } from '@ghost-protocol/shared';
 import pino from 'pino';
 
 const logger = pino({ name: 'api-router' });
@@ -126,10 +128,12 @@ export class ApiStateStore {
  * API 라우터 생성
  * @param gameLoopManager 게임 루프 매니저
  * @param stateStore API 상태 저장소
+ * @param challengeOrchestrator 챌린지 매치 오케스트레이터 (선택사항)
  */
 export function createApiRouter(
   gameLoopManager: GameLoopManager,
   stateStore: ApiStateStore,
+  challengeOrchestrator?: ChallengeMatchOrchestrator,
 ): Router {
   const router = Router();
 
@@ -268,6 +272,76 @@ export function createApiRouter(
       ).length,
       totalMatches: stateStore.matches.size,
     });
+  });
+
+  // === 챌린지 매치 API ===
+
+  /** 챌린지 생성 */
+  router.post('/challenge', (req: Request, res: Response) => {
+    if (!challengeOrchestrator) {
+      res.status(503).json({ error: '챌린지 시스템이 초기화되지 않았습니다' });
+      return;
+    }
+
+    const body = req.body as Record<string, unknown>;
+    const sessionToken = body['sessionToken'];
+    const difficultyRaw = body['difficulty'];
+    const agentId = body['agentId'];
+
+    if (typeof sessionToken !== 'string' || sessionToken.length === 0) {
+      res.status(400).json({ error: 'sessionToken이 필요합니다' });
+      return;
+    }
+
+    // difficulty 검증 (1~5)
+    const difficulty = typeof difficultyRaw === 'number' ? difficultyRaw : 3;
+    if (difficulty < 1 || difficulty > 5 || !Number.isInteger(difficulty)) {
+      res.status(400).json({ error: 'difficulty는 1~5 사이의 정수여야 합니다' });
+      return;
+    }
+
+    const finalAgentId = typeof agentId === 'string' && agentId.length > 0
+      ? agentId
+      : `agent-${Date.now().toString(36)}`;
+
+    try {
+      const challenge = challengeOrchestrator.createChallenge(
+        finalAgentId,
+        difficulty as DifficultyTier,
+        sessionToken,
+      );
+      res.status(201).json({ challenge });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '챌린지 생성 실패';
+      logger.error({ error: message }, '챌린지 생성 오류');
+      res.status(400).json({ error: message });
+    }
+  });
+
+  /** 활성 챌린지 목록 조회 */
+  router.get('/challenge', (_req: Request, res: Response) => {
+    if (!challengeOrchestrator) {
+      res.json({ challenges: [] });
+      return;
+    }
+    const challenges = challengeOrchestrator.getActiveMatches();
+    res.json({ challenges });
+  });
+
+  /** 챌린지 상세 조회 */
+  router.get('/challenge/:matchId', (req: Request, res: Response) => {
+    if (!challengeOrchestrator) {
+      res.status(503).json({ error: '챌린지 시스템이 초기화되지 않았습니다' });
+      return;
+    }
+
+    const matchId = String(req.params['matchId'] ?? '');
+    const challenge = challengeOrchestrator.getMatch(matchId);
+    if (!challenge) {
+      res.status(404).json({ error: '챌린지를 찾을 수 없습니다' });
+      return;
+    }
+    res.json({ challenge });
   });
 
   return router;

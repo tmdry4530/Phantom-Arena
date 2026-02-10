@@ -14,6 +14,7 @@ import type { Direction, GameStateFrame, RoundStartEvent } from '@ghost-protocol
 import { WS_EVENTS } from '@ghost-protocol/shared';
 import type { GameLoopManager } from '../game/GameLoopManager.js';
 import type { ApiStateStore } from '../routes/api.js';
+import type { ChallengeMatchOrchestrator } from '../orchestrator/ChallengeMatchOrchestrator.js';
 import pino from 'pino';
 
 /** 구조화된 로거 */
@@ -47,6 +48,12 @@ export class SocketManager {
 
   /** 소켓 ID → 참가 중인 룸 ID 매핑 */
   private socketSessions: Map<string, Set<string>> = new Map();
+
+  /** 챌린지 매치 오케스트레이터 참조 */
+  private challengeOrchestrator: ChallengeMatchOrchestrator | null = null;
+
+  /** 에이전트 소켓 ID → 인증된 matchId 매핑 */
+  private agentSockets: Map<string, string> = new Map();
 
   /**
    * SocketManager 생성
@@ -149,6 +156,16 @@ export class SocketManager {
 
       socket.on('leave_room', (data: unknown) => {
         this.handleLeaveRoom(socket, data);
+      });
+
+      // === 챌린지 매치 에이전트 인증 ===
+      socket.on(WS_EVENTS.AUTH_CHALLENGE, (data: unknown) => {
+        this.handleChallengeAuth(socket, data);
+      });
+
+      // === 챌린지 매치 에이전트 행동 ===
+      socket.on(WS_EVENTS.AGENT_ACTION, (data: unknown) => {
+        this.handleChallengeAgentAction(socket, data);
       });
 
       // === 플레이어 입력 ===
@@ -259,6 +276,13 @@ export class SocketManager {
    * @param socket 해제된 소켓
    */
   private handleDisconnect(socket: Socket): void {
+    // 챌린지 에이전트 연결 해제 처리
+    const matchId = this.agentSockets.get(socket.id);
+    if (matchId) {
+      this.challengeOrchestrator?.onAgentDisconnected(socket.id);
+      this.agentSockets.delete(socket.id);
+    }
+
     this.socketSessions.delete(socket.id);
     logger.info(`WebSocket 해제: ${socket.id}`);
   }
@@ -326,6 +350,83 @@ export class SocketManager {
   }
 
   /**
+   * 챌린지 매치 오케스트레이터 설정
+   * @param orchestrator ChallengeMatchOrchestrator 인스턴스
+   */
+  setChallengeOrchestrator(orchestrator: ChallengeMatchOrchestrator): void {
+    this.challengeOrchestrator = orchestrator;
+    logger.info('ChallengeOrchestrator 연결 완료');
+  }
+
+  /**
+   * 챌린지 매치 에이전트 인증 처리
+   * sessionToken으로 매치 검증 후 룸 join + orchestrator 알림
+   */
+  private handleChallengeAuth(socket: Socket, data: unknown): void {
+    if (data === null || data === undefined || typeof data !== 'object') {
+      socket.emit('error', { message: '유효하지 않은 챌린지 인증 요청' });
+      return;
+    }
+
+    const dataObj = data as Record<string, unknown>;
+    const matchId = dataObj['matchId'];
+    const sessionToken = dataObj['sessionToken'];
+
+    if (typeof matchId !== 'string' || typeof sessionToken !== 'string') {
+      socket.emit('error', { message: 'matchId와 sessionToken이 필요합니다' });
+      return;
+    }
+
+    if (!this.challengeOrchestrator) {
+      socket.emit('error', { message: '챌린지 시스템이 초기화되지 않았습니다' });
+      return;
+    }
+
+    // 매치 정보 조회 및 토큰 검증
+    const matchInfo = this.challengeOrchestrator.getMatch(matchId);
+    if (!matchInfo || matchInfo.sessionToken !== sessionToken) {
+      socket.emit('error', { message: '유효하지 않은 매치 또는 세션 토큰' });
+      return;
+    }
+
+    // 매치 룸에 join
+    const roomId = matchInfo.sessionId;
+    void socket.join(roomId);
+    const sessions = this.socketSessions.get(socket.id);
+    sessions?.add(roomId);
+
+    // 에이전트 소켓 매핑 저장
+    this.agentSockets.set(socket.id, matchId);
+
+    // orchestrator에 연결 알림
+    const connected = this.challengeOrchestrator.onAgentConnected(matchId, socket.id);
+    if (connected) {
+      socket.emit(WS_EVENTS.AUTH_CHALLENGE_OK, { matchId, sessionId: roomId });
+      logger.info(`챌린지 에이전트 인증 성공: ${socket.id} → ${matchId}`);
+    } else {
+      socket.emit('error', { message: '에이전트 연결 실패 — 매치가 대기 상태가 아닙니다' });
+    }
+  }
+
+  /**
+   * 챌린지 매치 에이전트 행동 처리
+   * 방향 입력을 검증하여 orchestrator에 전달
+   */
+  private handleChallengeAgentAction(socket: Socket, data: unknown): void {
+    if (data === null || data === undefined || typeof data !== 'object') return;
+
+    const dataObj = data as Record<string, unknown>;
+    const direction = dataObj['direction'];
+
+    if (typeof direction !== 'string' || !VALID_DIRECTIONS.has(direction)) return;
+
+    const matchId = this.agentSockets.get(socket.id);
+    if (!matchId) return;
+
+    this.challengeOrchestrator?.handleAgentAction(matchId, direction as Direction);
+  }
+
+  /**
    * API 상태 저장소 설정
    * 로비 참가 시 현재 매치/토너먼트 목록을 전송하기 위해 필요
    * @param stateStore API 상태 저장소 인스턴스
@@ -341,6 +442,7 @@ export class SocketManager {
    */
   shutdown(): void {
     this.socketSessions.clear();
+    this.agentSockets.clear();
     this.gameLoopManager.shutdown();
     logger.info('SocketManager 종료');
   }

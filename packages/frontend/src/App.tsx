@@ -5,6 +5,7 @@ import { Tournament } from './routes/Tournament.js';
 import { Leaderboard } from './routes/Leaderboard.js';
 import { SurvivalPlay } from './routes/SurvivalPlay.js';
 import { MyBets } from './routes/MyBets.js';
+import { Challenge } from './routes/Challenge.js';
 import { GameContainer } from './components/game';
 import { GameViewer } from './routes/GameViewer.js';
 import { NotFound } from './routes/NotFound.js';
@@ -21,6 +22,7 @@ export function App() {
         <Route path="/survival" element={<SurvivalPlay />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/my-bets" element={<MyBets />} />
+        <Route path="/challenge" element={<Challenge />} />
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route path="/game" element={<GameContainer />} />

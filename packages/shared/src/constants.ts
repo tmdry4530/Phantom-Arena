@@ -213,6 +213,12 @@ export const WS_EVENTS = {
   JOIN_TOURNAMENT: 'join_tournament',
   JOIN_BETTING: 'join_betting',
   JOIN_LOBBY: 'join_lobby',
+
+  // 챌린지 매치 이벤트
+  AUTH_CHALLENGE: 'auth_challenge',
+  AUTH_CHALLENGE_OK: 'auth_challenge_ok',
+  MATCH_COUNTDOWN: 'match_countdown',
+  CHALLENGE_CREATED: 'challenge_created',
 } as const;
 
 // ===== API 경로 =====

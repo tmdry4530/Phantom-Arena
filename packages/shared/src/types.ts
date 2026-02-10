@@ -367,3 +367,32 @@ export interface IndexerSettlementEvent {
   readonly bettor: string;
   readonly payout: string;
 }
+
+// ===== 챌린지 매치 타입 =====
+
+/** 챌린지 매치 상태 */
+export type ChallengeStatus =
+  | 'created'
+  | 'waiting_agent'
+  | 'betting'
+  | 'countdown'
+  | 'active'
+  | 'completed'
+  | 'expired'
+  | 'settling'
+  | 'settled';
+
+/** 챌린지 매치 정보 */
+export interface ChallengeMatchInfo {
+  readonly id: string;
+  readonly agentId: string;
+  readonly sessionToken: string;
+  readonly difficulty: DifficultyTier;
+  readonly status: ChallengeStatus;
+  readonly sessionId: string;
+  readonly onChainMatchId: number;
+  readonly createdAt: number;
+  readonly agentSocketId: string | null;
+  readonly score: number;
+  readonly winner: 'pacman' | 'ghost' | null;
+}
