@@ -15,7 +15,14 @@ const envSchema = z.object({
   CORS_ORIGIN: z
     .string()
     .default('http://localhost:5173')
-    .transform((val) => val.split(',').map((s) => s.trim())),
+    .transform((val): (string | RegExp)[] =>
+      val.split(',').map((s) => {
+        const trimmed = s.trim();
+        return trimmed.includes('*')
+          ? new RegExp('^' + trimmed.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$')
+          : trimmed;
+      }),
+    ),
 
   /** Monad RPC URL */
   MONAD_RPC_URL: z.string().default('https://testnet.monad.xyz/v1'),
