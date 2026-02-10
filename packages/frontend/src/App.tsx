@@ -9,6 +9,7 @@ import { Challenge } from './routes/Challenge.js';
 import { GameContainer } from './components/game';
 import { GameViewer } from './routes/GameViewer.js';
 import { NotFound } from './routes/NotFound.js';
+import Docs from './routes/Docs.js';
 
 /** 메인 애플리케이션 컴포넌트 */
 export function App() {
@@ -23,6 +24,7 @@ export function App() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/my-bets" element={<MyBets />} />
         <Route path="/challenge" element={<Challenge />} />
+        <Route path="/docs" element={<Docs />} />
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route path="/game" element={<GameContainer />} />
